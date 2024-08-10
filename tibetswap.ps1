@@ -54,27 +54,64 @@ Function Build-UrlWithParameters {
 }
 
 Function Get-TibetTokens {
-    
+    $uri = 'https://api.v2.tibetswap.io/tokens'
+    Return Invoke-RestMethod -Method Get -Uri $uri
     
 }
 
 Function Get-TibetPairs {
-
+    param(
+        [int]$skip,
+        [int]$limit
+    )
+    $Parameters = @{}
+    if($skip){
+        $Parameters.Add('skip',$skip)
+    }
+    if($limit){
+        $Parameters.Add('limit',$limit)
+    }
+    $uri = Build-UrlWithParameters -BaseUrl 'https://api.v2.tibetswap.io/pairs'
+    return Invoke-RestMethod -Method Get -Uri $uri
 }
 
 Function Get-TibetToken {
-
+    param(
+        [string] $asset_id
+    )
+    $uri = -join('https://api.v2.tibetswap.io/token/',$asset_id)
+    Return Invoke-RestMethod -Method Get -Uri $uri
 }
 
 Function Get-TibetPair {
-
+    param(
+        [string]$launcher_id
+    )
+    $uri = -join('https://api.v2.tibetswap.io/pair/',$launcher_id)
+    Return Invoke-RestMethod -Method Get -Uri $uri
 }
 
 Function Get-TibetRouter {
-
+    Return Invoke-RestMethod -Method Get -Uri 'https://api.v2.tibetswap.io/router'
 }
 
 Function Get-TibetQuote {
+    param(
+        [string]$pair_id,
+        [Int64]$amount_in,
+        [Int64]$amount_out,
+        [switch]$xch_is_input,
+        [switch]$estimate_fee,
+        [switch]$input_is_xch_notation
+    )
+
+    if($input_is_xch_notation.IsPresent){
+        if($xch_is_input.IsPresent){
+            
+        }
+    }
+
+
 
 }
 
