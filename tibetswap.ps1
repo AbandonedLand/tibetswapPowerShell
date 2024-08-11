@@ -93,7 +93,7 @@ Function Get-TibetTokens {
                 }, ...
             ]
         .LINK
-            https://api.v2.tibetswap.io/docs#/
+            https://api.v2.tibetswap.io/docs#/default/get_tokens_tokens_get
         
 
     #>
@@ -133,6 +133,12 @@ Function Get-TibetPairs {
                     "last_coin_id_on_chain": "ceb5b60caed76623d8e1e31809e9adfd0c98995effe51bd2a4fa570c5eaa5ab9"
                 }, ...
             ]
+        .PARAMETER skip
+            Skips foward in query.
+
+        .PARAMETER limit
+            Limit number of results to display.
+        
         .EXAMPLE 
             Get-TibetPairs -limit 10 -skip 2       
 
@@ -153,7 +159,8 @@ Function Get-TibetPairs {
             token_reserve         : 1821152282
             liquidity             : 2918214769
             last_coin_id_on_chain : ceb5b60caed76623d8e1e31809e9adfd0c98995effe51bd2a4fa570c5eaa5ab9
-
+        .LINK
+            https://api.v2.tibetswap.io/docs#/default/read_pairs_pairs_get
 
     #>
     param(
@@ -172,6 +179,34 @@ Function Get-TibetPairs {
 }
 
 Function Get-TibetToken {
+    <#
+        .SYNOPSIS
+            Retrieve an individual traded token by asset_id
+
+        .DESCRIPTION
+            Retrieve a tokens with asset_id, (pair_id/launcher_id), name, short_name from TibetSwap API.
+        
+        .EXAMPLE
+            Get-TibetToken -asset_id a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+
+            Output:
+
+            asset_id   : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+            pair_id    : 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af
+            name       : Spacebucks
+            short_name : SBX
+            image_url  : https://nftstorage.link/ipfs/bafybeicyyqrk4llkvosnstdehby5pajumgzh7imvkt3dlywape65putcne/a628c1c2c6fcb74d53746157e438e10 
+                        8eab5c0bb3e5c80ff9b1910b3e4832913.png
+            verified   : True
+
+        .PARAMETER asset_id
+            The CAT2 tail id for the token.
+
+        .LINK
+            https://api.v2.tibetswap.io/docs#/default/get_token_token__asset_id__get
+        
+    #>
+
     param(
         [string] $asset_id
     )
@@ -180,11 +215,55 @@ Function Get-TibetToken {
 }
 
 Function Get-TibetPair {
+    <#
+        .SYNOPSIS
+            Retrive trading pair data from a specific trading pair.
+        .DESCRIPTION
+            Retrives data on total locked value for a trading pair. The liquidiy values are displayed
+            in mojos not XCH notation by defult.
+        .PARAMETER launcher_id
+            The luancher_id is also know as the pair_id in the Get-TibetTokens endpoint.
+        .PARAMETER display_as_xch_notation
+            Convert the xch_reserve and token_reserve to XCH notation.  
+            xch_reserve / 1000000000000
+            token_reserve / 1000
+        
+        .EXAMPLE
+            Get-TibetPair -launcher_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af
+
+            launcher_id           : 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af
+            asset_id              : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+            liquidity_asset_id    : fbe2694f6fbc63a4d9c8a598dc70f8b6fdf468e8e595ca4c6efee5a2f1ec71a4
+            xch_reserve           : 138871205361620
+            token_reserve         : 4694378021
+            liquidity             : 6216902999
+            last_coin_id_on_chain : aa73c5ff4bfb6382b2457498e7eefb06a6d8730822f77d6930ce65614dd26ebc
+        
+        
+        .EXAMPLE
+            Get-TibetPair -launcher_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -display_as_xch_notation
+
+            launcher_id           : 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af
+            asset_id              : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+            liquidity_asset_id    : fbe2694f6fbc63a4d9c8a598dc70f8b6fdf468e8e595ca4c6efee5a2f1ec71a4
+            xch_reserve           : 138.87120536162
+            token_reserve         : 4694378.021
+            liquidity             : 6216902999
+            last_coin_id_on_chain : aa73c5ff4bfb6382b2457498e7eefb06a6d8730822f77d6930ce65614dd26ebc
+            
+    #>
     param(
-        [string]$launcher_id
+        [string]$launcher_id,
+        [switch]$display_as_xch_notation
     )
     $uri = -join('https://api.v2.tibetswap.io/pair/',$launcher_id)
-    Return Invoke-RestMethod -Method Get -Uri $uri
+
+    $response = Invoke-RestMethod -Method Get -Uri $uri
+    if($display_as_xch_notation.IsPresent){
+        $response.xch_reserve = [decimal]$response.xch_reserve / 1000000000000
+        $response.token_reserve = [decimal]$response.token_reserve / 1000
+    }
+    return $response
 }
 
 Function Get-TibetRouter {
@@ -192,6 +271,39 @@ Function Get-TibetRouter {
 }
 
 Function Get-TibetQuote {
+    <#
+        .SYNOPSIS
+            Retrive a trade quote from TibetSwap for a given pair_id (launcher_id).
+        .DESCRIPTION
+            Retrive an offer quote from TibetSwap.  This will show what the AMM will accept as a trade.
+
+        .EXAMPLE
+            Retrieve a quote for 0.001 SpaceBucks
+            Get-TibetQuote -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -amount_in 1
+
+            Output: 
+                amount_in      : 1
+                amount_out     : 29375
+                price_warning  : False
+                price_impact   : 4.2305381420249E-10
+                fee            : 
+                asset_id       : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+                input_reserve  : 4694378021
+                output_reserve : 138871205361620
+        .EXAMPLE
+            Retrieve a quote for 0.000000000001 XCH worth of SpaceBucks
+            Get-TibetQuote -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -amount_in 1 -xch_is_input
+            
+                amount_in      : 1
+                amount_out     : 0
+                price_warning  : False
+                price_impact   : 0
+                fee            : 
+                asset_id       : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+                input_reserve  : 138871205361620
+                output_reserve : 4694378021
+
+    #>
     param(
         [string]$pair_id,
         [Decimal]$amount_in,
@@ -211,6 +323,7 @@ Function Get-TibetQuote {
             $amount_out = $amount_out * 1000000000000
             $amount_in = $amount_in * 1000
         }
+
     }
     if($amount_in){
         $Parameters.Add('amount_in',$amount_in)
@@ -239,6 +352,7 @@ Function Get-TibetQuote {
             $result.amount_out = [decimal]($result.amount_out / 1000000000000)
             $result.amount_in = [decimal]($result.amount_in / 1000)
         }
+        $result | Add-Member -Name xch_notation -Type NoteProperty -Value $true
     }
     return $result
 }
