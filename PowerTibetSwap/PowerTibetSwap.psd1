@@ -30,7 +30,8 @@ CompanyName = 'Unknown'
 Copyright = '(c) MayorAbandoned. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'A PowerShell Wrapper for the TibetSwap API.  TibetSwap can be found at https://v2.tibetswap.io.
+Full API Docs are here https://api.v2.tibetswap.io/docs'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '7.4'
