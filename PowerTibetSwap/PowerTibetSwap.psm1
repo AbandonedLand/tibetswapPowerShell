@@ -426,3 +426,4 @@ Function Submit-TibetOffer {
 
 }
 
+Export-ModuleMember -Function Get-TibetPair Get-TibetPairs Get-TibetTokens Get-TibetToken Get-TibetRouter Get-TibetQuote Submit-TibetOffer
