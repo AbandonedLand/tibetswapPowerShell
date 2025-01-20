@@ -31,11 +31,46 @@ $sbx_token = Get-TibetToken -asset_id a628c1c2c6fcb74d53746157e438e108eab5c0bb3e
 # image_url  : https://nftstorage.link/ipfs/bafybeicyyqrk4llkvosnstdehby5pajumgzh7imvkt3dlywape65putcne/a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913.png
 # verified   : True
 
+```
 
-$pair = Get-TibetPair -launcher_id $sbx_token.pair_id
+### Get a Quote
+Since we wish to buy SBX, we will indicate the amount we want from TibetSwap in the Mojo notation.  In this case SBX is a CAT token and most CATs have 1000 mojo per Unit.  We want 100 Coins out so we put the amount_out as (100 * 1000 = 100000).   The coin goin into the AMM is XCH, so you want to use the ```-xch_is_input``` flag.
+
+```powershell
+Get-TibetQuote -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -amount_out 100000 -xch_is_input
+
+<# 
+amount_in      : 6449839998
+amount_out     : 100000
+price_warning  : False
+price_impact   : 3.46814011447094E-05
+fee            : 
+asset_id       : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+input_reserve  : 369334819969266
+output_reserve : 5766729697
+#>
+```
+
+You now can see the amounts of the offer that need to be created.
 
 
-Get-TibetQuote
+You want to Request 100 SBX (a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913)
+
+You want to offer (6449839998 / 1000000000000) = 0.006449839998 XCH.   Use your favorite wallet to generate the offer.
+
+You'll want to copy the offer data into the clipboard and make a variable for it.
+
+```powershell
+$offer_data = "offer1zzzzzzzz........"
+
+Submit-TibetOffer -pair_id $sbx_token.pair_id -offer $offer_data -action SWAP 
+
+<#
+success message                                offer_id
+------- -------                                --------
+True    {"status": "SUCCESS", "success": true} 3RR9miy92Vfxr1kgb72Z28sDMhU44BivD1nwkxRLPMHb
+#>
+
 ```
 
 
