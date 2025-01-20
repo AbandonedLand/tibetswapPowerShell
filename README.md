@@ -1,13 +1,42 @@
-# tibetswapPowerShell
- PowerShell wrapper for TibetSwap API for Chia Blockchain
+# TibetSwapPowerShell
+ PowerShell Wrapper for TibetSwap API for Chia Blockchain
 
 # Installation
- Clone download the ps1 file into a direcory of your choosing.  Then load the function using the dot notation.
 
  ```powershell
- . .\tibetswap.ps1
+Install-Module -name PowerTibetSwap
+
+Import-Module -name PowerTibetSwap
  ```
 
+# Upgrade
+```powershell
+Update-Module -name PowerTibetSwap
+```
+
+# Complete a Trade on TibetSwap
+
+### Find the the pair_id/launcher_id of the trading pair.
+In this example, we'll purchase 100 SBX with XCH.
+
+```powershell
+$sbx_token = Get-TibetToken -asset_id a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+
+# $sbx_token
+
+# asset_id   : a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913
+# pair_id    : 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af
+# name       : Spacebucks
+# short_name : SBX
+# image_url  : https://nftstorage.link/ipfs/bafybeicyyqrk4llkvosnstdehby5pajumgzh7imvkt3dlywape65putcne/a628c1c2c6fcb74d53746157e438e108eab5c0bb3e5c80ff9b1910b3e4832913.png
+# verified   : True
+
+
+$pair = Get-TibetPair -launcher_id $sbx_token.pair_id
+
+
+Get-TibetQuote
+```
 
 
 # Get-TibetTokens
@@ -45,7 +74,6 @@ name       : dexie bucks
 short_name : DBX
 image_url  : https://nftstorage.link/ipfs/bafybeidiupubzjznsxonxxjvrw3jeemwsb6lgtir23mgfqoeybwcnqljsi/db1a9020d48d9d4ad22631b66ab4b9ebd3637ef7758ad38881348c5d24c38f20.png
 verified   : True
-
 asset_id   : 509deafe3cd8bbfbb9ccce1d930e3d7b57b40c964fa33379b18d628175eb7a8f
 pair_id    : 3bc8a62cb5d05190e4aa8d3ea738f639259402f356a99c6521011063d100580b
 name       : Chia Holiday 2021
@@ -203,13 +231,13 @@ xch_notation   : True
 ```
 
 
-# Send-TibetOffer
+# Submit-TibetOffer
 
 ## SYNOPSIS
-Send an offer to TibetSwap.
+Submit a TibetSwap offer by sending the offer data to the API.
 
 ## DESCRIPTION    
-This function allows you to send an offer to TibetSwap for it to be accepted. The offers can be for swapping tokens, adding liquidity, or removing liquidity.
+Send an offer to TibetSwap to get accepted.  The offers can be to swap, add/remove liquidity.
 
 ## PARAMETERS
 
@@ -222,9 +250,10 @@ This function allows you to send an offer to TibetSwap for it to be accepted. Th
 ### Example 1
 Send an offer to swap XCH for SpaceBucks:
 ```powershell
-Send-TibetOffer -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -offer offer1d24..... -action SWAP
+Submit-TibetOffer -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -offer offer1d24..... -action SWAP
 ```
 ```powershell
+
 success message                                offer_id
 ------- -------                                --------
 True    {"status": "SUCCESS", "success": true} 3RR9miy92Vfxr1kgb72Z28sDMhU44BivD1nwkxRLPMHb

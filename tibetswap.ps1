@@ -384,10 +384,10 @@ Function Get-TibetQuote {
 
 
 
-Function Send-TibetOffer {
+Function Submit-TibetOffer {
     <#
         .SYNOPSIS
-            Send TibetSwap an offer.
+            Submit a TibetSwap offer by sending the offer data to the API.
 
         .DESCRIPTION    
             Send an offer to TibetSwap to get accepted.  The offers can be to swap, add/remove liquidity.
@@ -396,8 +396,8 @@ Function Send-TibetOffer {
             https://api.v2.tibetswap.io/docs#/default/create_offer_endpoint_offer__pair_id__post
 
         .EXAMPLE
-            Send an offer to swap XCH for SpaceBucks
-            Send-TibetOffer -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -offer offer1d24..... -action SWAP
+            Submit an offer to swap XCH for SpaceBucks
+            Submit-TibetOffer -pair_id 1a6d4f404766f984d014a3a7cab15021e258025ff50481c73ea7c48927bd28af -offer offer1d24..... -action SWAP
 
             success message                                offer_id
             ------- -------                                --------
