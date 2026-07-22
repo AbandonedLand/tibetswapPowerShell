@@ -371,6 +371,7 @@ Function Get-TibetQuote {
     $result = Invoke-RestMethod -Method Get -Uri $uri
     if($display_as_xch_notation.IsPresent){
         if($xch_is_input.IsPresent){
+            $y = [decimal]($result.amount_out / 1000)
             $result.amount_in = [decimal]($result.amount_in / 1000000000000)
             $result.amount_out = [decimal]($result.amount_out / 1000)
         } else {
@@ -378,7 +379,20 @@ Function Get-TibetQuote {
             $result.amount_in = [decimal]($result.amount_in / 1000)
         }
         $result | Add-Member -Name xch_notation -Type NoteProperty -Value $true
+
     }
+
+    if($xch_is_input.IsPresent){
+        $y = [decimal]($result.amount_out / 1000)
+        $x = [decimal]($result.amount_in / 1000000000000)
+    } else {
+        $x = [decimal]($result.amount_out / 1000000000000)
+        $y = [decimal]($result.amount_in / 1000)
+    }
+    $result | Add-Member -name price -Type NoteProperty -value ([Math]::round(($y / $x),3))
+    
+    
+
     return $result
 }
 
