@@ -12,7 +12,7 @@
 RootModule = '.\PowerTibetSwap.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.9.0'
+ModuleVersion = '1.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -77,7 +77,8 @@ FunctionsToExport = @(
     "Get-TibetToken", 
     "Get-TibetRouter",
     "Get-TibetQuote",
-    "Submit-TibetOffer"
+    "Submit-TibetOffer",
+    "Find-PairIdByTicker"
 )
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

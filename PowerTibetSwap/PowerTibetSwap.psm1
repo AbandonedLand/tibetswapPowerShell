@@ -185,7 +185,7 @@ Function Get-TibetPairs {
     if($limit){
         $Parameters.Add('limit',$limit)
     }
-    $uri = Build-UrlWithParameters -BaseUrl 'https://api.v2.tibetswap.io/pairs'
+    $uri = Build-UrlWithParameters -BaseUrl 'https://api.v2.tibetswap.io/pairs' -Parameters $Parameters
     return Invoke-RestMethod -Method Get -Uri $uri
 }
 
@@ -440,4 +440,17 @@ Function Submit-TibetOffer {
 
 }
 
-Export-ModuleMember -Function Get-TibetPair Get-TibetPairs Get-TibetTokens Get-TibetToken Get-TibetRouter Get-TibetQuote Submit-TibetOffer
+Function Find-PairIdByTicker {
+    param($ticker)
+    
+    $pairs = Get-TibetPairs -skip 0 -limit 500
+    $pair = $pairs | Where-Object {$_.asset_sort_name -eq $ticker}
+    if($pair.count -eq 1){
+        return $pair[0]
+    } else {
+        Write-Error "Could not find ticker: $ticker"
+        throw
+    }
+}
+
+Export-ModuleMember -Function Get-TibetPair Get-TibetPairs Get-TibetTokens Get-TibetToken Get-TibetRouter Get-TibetQuote Submit-TibetOffer, Find-PairIdByTicker
